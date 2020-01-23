@@ -1,0 +1,672 @@
+html, body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    user-select: none;
+}
+main {
+    height: 100%;
+    box-sizing: border-box ;
+    position: relative;
+}
+nav {
+    height: 49px;
+    position: relative;
+    width: 100%;
+    border-bottom: gainsboro solid 1px;
+}
+h1, h2, h3, th {
+    margin: 0;
+    text-transform: capitalize;
+}
+h1 {
+    font-size: 20pt;
+    font-weight: 600;
+}
+h2 {
+    font-size: 16pt;
+    font-weight: 500;
+}
+h3, th {
+    font-size: 12pt;
+    font-weight: 500;
+}
+th {
+    padding: 10px 15px;
+    text-align: left;
+}
+td {
+    width: 100%;
+    padding: 0;
+    font-weight: 400;
+    font-size: 11pt;
+}
+input {
+    padding: 10px 15px;
+    outline: none;
+    border: none;
+    font-size: inherit;
+    font-weight: inherit;
+    width: calc(100% - 30px);
+    background-color: transparent;
+    /* vertical-align: middle; */
+    display: block;
+}
+select {
+    transform: translateX(7px);
+    outline: none;
+    border: none;
+    font-size: inherit;
+    font-weight: inherit;
+    width: calc(100% - 30px);
+    background-color: transparent;
+}
+input[type=checkbox] {
+    display: inline-block;
+    width: 15px;
+    margin: 10px 5px 10px 15px;
+}
+input[type=button] {
+    background-color: cornflowerblue;
+    width: calc(100% - 30px);
+    height: 26px;
+    padding: 5px 0;
+    margin: 5px 15px;
+    color: white;
+    line-height: 16px;
+    border-radius: 3px;
+}
+input[type=button]:hover {
+    background-color: rgb(84, 119, 183);
+    cursor: pointer;
+}
+input[type=button]:disabled {
+    background-color: #bbb;
+}
+input:disabled {
+    background-color: #bbb3;
+    color: inherit;
+}
+input:disabled:hover {
+    cursor: not-allowed;
+}
+input::placeholder {
+    color: rgb(194, 194, 194);
+}
+section.hidden {
+    display: none !important;
+}
+span.code {
+    font-family: "SF mono"
+}
+div.title {
+    padding: 10px 0;
+    height: 29px;
+    position: fixed;
+    width: inherit;
+    background-color: white;
+    z-index: 100;
+}
+div.title h1, div.title h2 {
+    display: inline-block;
+    margin-left: 15px;
+}
+div.content {
+    padding: 0 15px 15px;
+    margin-top: 50px;
+}
+div.content h3, div.content p {
+    display: inline;
+}
+div.property, div.preview {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: aliceblue;
+}
+div.control, div.layout {
+    padding: 0 15px;
+    margin: 10px 0;
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    font-size: 10pt;
+    font-weight: 600;
+    height: 70px;
+    line-height: 15px;
+    display: flex;
+}
+div.control img, div.layout img {
+    width: 50px;
+    height: 70px;
+    margin-right: 15px;
+    float: left;
+}
+div.control span, div.layout span {
+    float: left;
+    width: 379px;
+    line-height: 16px;
+    margin: auto 0;
+}
+div.control span strong, div.layout span strong {
+    font-weight: 400;
+    font-size: 9pt;
+}
+div.control span strong::before, div.layout span strong::before {
+    content: "- ";
+}
+div.control:hover {
+    background-color: #e1e1e1;
+    cursor: -webkit-grab;
+}
+div.layout {
+    background-color: aliceblue;
+}
+div.layout:hover {
+    background-color: rgb(217, 236, 252);
+}
+div.operation {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 3px 0 10px;
+    background-color: cornflowerblue;
+    color: white;
+    border-radius: 3px;
+    font-size: 11pt;
+}
+div.operation:hover {
+    background-color: rgb(84, 119, 183);
+}
+div.menu-item {
+    width: max-content;
+}
+div.menu-item-parent {
+    position: relative;
+    float: left;
+    width: max-content;
+    height: fit-content;
+    background-color: #e6e6e6;
+    font-size: 10pt;
+    line-height: 22px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+.selected {
+    color: white;
+    background-color: #275bc2 !important;
+}
+div.menu-item table {
+    position: relative;
+    float: left;
+    clear: both;
+    width: max-content;
+    height: fit-content;
+    min-height: 22px;
+    border-collapse: collapse;
+    margin-top: 3px;
+}
+div.menu-item table td {
+    float: left;
+    min-height: 22px;
+    min-width: fit-content;
+    white-space: nowrap;
+    background-color: #f1f1f1;
+    font-size: 10pt;
+    line-height: 22px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border-left: #bbb 1px solid;
+    border-right: #bbb 1px solid;
+}
+div.menu-item table tr {
+    float: left;
+    width: min-content;
+    margin-right: 3px;
+}
+div.menu-item table td.empty {
+    background: transparent;
+    border: none;
+    color: transparent;
+}
+div.menu-item table td.empty:hover {
+    background: transparent;
+    border: none;
+    color: transparent;
+}
+div.menu-item table td.first {
+    border-top: #bbb 1px solid;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+div.menu-item table td.last {
+    border-bottom: #bbb 1px solid;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+div.menu-item-parent:hover, div.menu-item table td:hover {
+    color: white;
+    background-color: #275bc2;
+}
+div.hidden {
+    display: none !important;
+}
+div.component-title, div.editor-window-title {
+    font-size: 10pt;
+    font-weight: 500;
+    line-height: 25px;
+}
+div.component-control, div.editor-window-control, div.included-control {
+    font-size: 10pt;
+    height: fit-content;
+    padding-left: 22px;
+}
+div.editor-window-control:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+div.component-title:hover, div.component-control:hover {
+    background-color: #275bc2 !important;
+    color: white !important;
+}
+div.component-control.layout-control, div.editor-window-control.layout-control {
+    font-weight: 500;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: rgb(217, 236, 252);
+}
+div.component-control img, div.editor-window-control img, div.included-control img {
+    width: 140px;
+    height: 14px;
+    margin: 4.5px 0 4.5px 30px;
+    padding-right: 5px;
+    float: right;
+}
+div.component-control > div, div.editor-window-control > div, div.included-control > div {
+    display: inline-flex;
+    min-width: 150px;
+    /* width: calc(100% - 175px); */
+    height: 23px;
+    line-height: 23px;
+    /* overflow: scroll */
+}
+div.component-control div::-webkit-scrollbar {
+    display: none;
+}
+div.component-control div.component-control-child,
+div.editor-window-control div.editor-window-control-child {
+    display: flex;
+    width: calc(100% - 30px);
+    padding-left: 30px;
+}
+div.component-control div.component-control-child:hover,
+div.editor-window-control div.editor-window-control-child:hover {
+    box-shadow: inset 0 0 0 2px white;
+}
+div.component-control div.component-control-child > div,
+div.editor-window-control div.editor-window-control-child > div {
+    width: calc(100% - 175px);
+}
+div.drag-over {
+    outline-style: auto;
+    outline-offset: 5px;
+    outline-width: 2px;
+    /* border: #275bc2 1px solid !important; */
+}
+div.toolbar {
+    width: fit-content;
+    position: absolute;
+    right: 15px;
+    display: inline-block;
+}
+div.toolbar > div {
+    display: inline-block;
+    padding: 7px;
+    margin-left: 3px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 11pt;
+}
+div.toolbar > input {
+    display: none;
+}
+div.toolbar > label {
+    display: inline-block;
+    padding: 5px 1px 2px;
+    margin-left: 7px;
+    font-size: 11pt;
+    color: #bbb;
+    /* border-radius: 3px; */
+}
+div.toolbar > label:hover {
+    border-bottom: 2px solid cornflowerblue;
+    cursor: pointer;
+}
+div.toolbar > input[type="radio"]:checked + label {
+    border-bottom: 2px solid cornflowerblue;
+    color: black;
+}
+
+nav div.title {
+    width: fit-content;
+}
+nav div.command, nav label.command {
+    float: right;
+    padding: 10px 15px;
+    height: 29px;
+    width: fit-content;
+    text-align: center;
+    font-size: 11pt;
+    line-height: 30px;
+    border-left: 2px solid white;
+    background-color: #f6f6f6;
+}
+nav div.command:hover, nav label.command:hover {
+    color: cornflowerblue;
+}
+nav div.command#export {
+    background-color: cornflowerblue;
+    color: white;
+}
+nav div.command#export:hover {
+    background-color: rgb(84, 119, 183);
+}
+nav label.command#import input {
+    display: none;
+}
+
+section#sidebar {
+    float: left;
+    width: 499px;
+    height: calc(100% - 51px);
+    border-right: gainsboro solid 1px;
+}
+section div#property {
+    height: 50%;
+    border-bottom: gainsboro solid 1px;
+    overflow: scroll;
+    width: inherit;
+}
+section div#property table {
+    background-color: aliceblue;
+    border-spacing: 0;
+    border-radius: 5px;
+    /* overflow: hidden; */
+    width: 100%;
+    margin-bottom: 10px;
+}
+section div#property table th {
+    border-right: white solid 1px;
+    min-width: 150px;
+    max-width: 200px;
+}
+section div#property table#delete {
+    height: 35px;
+    background-color: white;
+    border: 1px solid #ff5454;
+    color: #ff5454;
+}
+section div#property table#help {
+    height: 35px;
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+}
+section div#property table#delete td, section div#property table#help td {
+    text-align: center;
+    border: none;
+}
+section div#property table#delete td:hover {
+    background-color: #ff5454;
+    color: white;
+    cursor: pointer;
+}
+section div#property table#help td:hover {
+    background-color: white;
+}
+section div#property table tr:hover, section div#property table tr:focus-within {
+    background-color: rgb(217, 236, 252);
+}
+section div#property table div.droppable {
+    min-height: 38px;
+}
+section div#property table div.droppable div.included-control {
+    margin: 2px 15px;
+    padding: 0;
+}
+section div#property table div.droppable div.included-control div {
+    min-width: 100px;
+    overflow: scroll;
+    display: inline-flex;
+}
+section div#property table div.droppable div.included-control div::-webkit-scrollbar {
+    display: none;
+}
+section div#property table div.droppable div.included-control img {
+    margin-left: 5px;
+    padding: 0;
+}
+section div#control {
+    width: inherit;
+    height: 50%;
+    overflow: scroll;
+}
+
+section#preview {
+    float: right;
+    width: calc(100% - 500px);
+    height: calc(100% - 51px);
+    overflow: scroll;
+}
+section#preview div.content {
+    padding-bottom: 200px;
+}
+section#preview div.content div#menu-bar {
+    display: inline-flex;
+    width: 100%;
+    height: auto;
+    min-height: 22px;
+    margin-top: 10px;
+    overflow-x: scroll;
+}
+section#preview div.content div#menu-bar::-webkit-scrollbar {
+    display: none;
+}
+section#preview div.content div#menu-bar img {
+    float: left;
+    height: 22px;
+}
+section#preview div.content div#item-container {
+    display: inline-flex;
+    height: fit-content;
+}
+section#preview div.content div#inspector {
+    width: fit-content;
+    height: auto;
+    min-height: 22px;
+    margin-top: 10px;
+}
+section#preview div.content div#inspector > div {
+    width: 100%;
+    height: 22px;
+    background-color: #e6e6e6;
+}
+section#preview div.content div#inspector > div > img {
+    float: right;
+    height: 22px;
+}
+section#preview div.content div#inspector div.component-container {
+    width: auto;
+    min-width: 300px;
+    height: auto;
+    min-height: 22px;
+    clear: both;
+    margin-bottom: 3px;
+    border: solid 1px #bbb;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    overflow: hidden;
+}
+section#preview div.content div#inspector div.component-container:nth-child(2) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+section#preview div.content div#inspector div.component-container div.component-title img {
+    float: left;
+    height: 25px;
+}
+section#preview div.content div#editor-window {
+    margin-top: 10px;
+    width: fit-content;
+}
+section#preview div.content div#editor-window div.editor-window-container {
+    margin-bottom: 4px;
+}
+section#preview div.content div#editor-window > img {
+    width: 545px;
+}
+section#preview div.content div#editor-window > div > div.editor-window-template {
+    width: 100%;
+    float: right;
+    background-color: #e6e6e6;
+}
+section#preview div.content div#editor-window > div > div.editor-window-template > img {
+    float: right;
+    width: 69px;
+    clear: both;
+}
+section#preview div.content div#editor-window div.editor-window-content {
+    min-width: 300px;
+    height: auto;
+    min-height: 10px;
+    clear: both;
+    margin-top: 3px;
+    border: solid 1px #bbb;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #f1f1f1;
+    position: relative;
+}
+section#preview div.content div#editor-window div.editor-window-content div.editor-window-title {
+    width: fit-content;
+    height: 24px;
+    position: absolute;
+    top: -26px;
+    left: -1px;
+    border-top: 1px solid #bbb;
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #fcfcfc;
+    padding: 0 10px;
+}
+section#preview div.content div#editor-window div.editor-window-content div.editor-window-title:hover, section#preview div.content div#editor-window div.editor-window-content div.editor-window-control:hover {
+    background-color: #275bc2;
+    color: white;
+}
+
+section#code, section#export-all {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 200;
+}
+section#code div.mask {
+    width: 600px;
+    height: 300px;
+    background-color: white;
+    position: absolute;
+    left: calc(50% - 300px);
+    top: calc(50% - 150px);
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0px #bbb1;
+}
+section#code div.mask div.title, section#export-all div.mask div.title {
+    /* width: calc(100% - 15px); */
+    border-radius: 5px;
+}
+section#code div.mask div.title div.operation {
+    float: right;
+    margin: 0 10px 0 0;
+}
+div.operation.red {
+    background-color: #ea5c5c;
+}
+div.operation.red:hover {
+    background-color: #ce5959;
+}
+div.operation.grey {
+    background-color: #888;
+}
+div.operation.grey:hover {
+    background-color: #666;
+}
+
+section#export-all div.mask {
+    width: 450px;
+    height: 380px;
+    background-color: white;
+    position: absolute;
+    left: calc(50% - 225px);
+    top: calc(50% - 190px);
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0px #bbb1;
+}
+section#export-all div.mask p {
+    margin-bottom: 10px;
+    display: block;
+    font-size: 10pt;
+    color: #666;
+    text-indent: 3px;
+}
+section#export-all div.mask div.content {
+    margin-top: 60px;
+    height: 185px;
+}
+section#export-all div.mask div.title div.operation {
+    float: right;
+    margin: 0 15px 0 0;
+}
+section#export-all input {
+    display: none;
+}
+section#export-all div.checkbox label {
+    display: block;
+    width: calc(100% - 30px);
+    background-color: aliceblue;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+section#export-all div.checkbox label:hover {
+    background-color: rgb(217, 236, 252);
+    cursor: pointer;
+}
+section#export-all div.checkbox input:checked + label {
+    box-shadow: inset 0 0 0 1px #275bc2;
+}
+section#export-all div.checkbox input:checked + label::after {
+    content: "selected";
+    font-size: 10pt;
+    color: #bbb;
+    margin-right: 30px;
+    position: absolute;
+    right: 0;
+}
+section#export-all div.mask div.operation-holder {
+    height: 105px;
+    padding-bottom: 15px;
+}
+section#export-all div.mask div.operation-holder div.operation {
+    float: left;
+    margin: 0 0 0 15px;
+    padding: 40px 15px;
+    width: calc(50% - 52.5px);
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    font-weight: 500;
+}

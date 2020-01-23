@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>UniTool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+    <!-- Vendor Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="node_modules/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="node_modules/codemirror/theme/eclipse.css" />
+
+    <!-- Vendor Javascripts -->
+    <script src="node_modules/circular-json/build/circular-json.js"></script>
+    <script src="node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="node_modules/codemirror/mode/clike/clike.js"></script>
+    <script src="node_modules/file-saver/dist/FileSaver.js"></script>
+    <script src="node_modules/js-beautify/js/lib/beautify.js"></script>
+    <script src="node_modules/jszip/dist/jszip.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
+
+    <!-- DOM Elements Event Handlers -->
+    <script src="js/drag.js"></script>
+
+    <!-- Data Structures -->
+    <script src="js/ds/enum.js"></script>
+    <script src="js/ds/item.js"></script>
+    <script src="js/ds/component.js"></script>
+    <script src="js/ds/ewindow.js"></script>
+    <script src="js/ds/menu-item-tree.js"></script>
+
+    <!-- Export Functions -->
+    <script src="js/export/export-menu.js"></script>
+    <script src="js/export/export-inspector.js"></script>
+    <script src="js/export/export-editor-window.js"></script>
+
+    <!-- Initialization -->
+    <script src="js/init.js"></script>
+</head>
+<body>
+    <main>
+    <nav>
+        <div class="title">
+            <h1>UniTool</h1>
+        </div>
+
+        <div id="export" class="command" v-on:click="exportAll()">
+            <h3>Export</h3>
+        </div>
+        <div id="save" class="command" v-on:click="saveFile()">
+            Save
+        </div>
+        <label id="import" for="import-file" class="command">
+            Import From JSON
+            <input id="import-file" type="file" accept="application/json" v-on:change="importFile($event)">
+        </label>
+    </nav>
+
+    <section id="sidebar">
+        <div id="property">
+            <div class="title">
+                <h2>Property</h2>
+            </div>
+            <div class="content">
+                <table v-if="selectedItem" id="property-container" v-on:change="onChange($event)" v-on:keydown="onKeyDown($event)" v-bind:onload="onLoad()">
+                    <tr v-for="(value, property) in selectedItem.properties" v-if="value.enable">
+                        <th>{{ property }}</th>
+                        <td>
+                            <input v-bind:property="property" v-if="checkPropertyType(value, 0)" v-bind:value="value.value" v-bind:disabled="!value.editable" v-bind:placeholder="property">
+                            
+                            <input v-bind:property="property" type="number" v-if="checkPropertyType(value, 1)" v-bind:value="value.value" v-bind:disabled="!value.editable" v-bind:placeholder="property">
+
+                            <input v-bind:property="property" type="checkbox" v-if="checkPropertyType(value, 2)" v-bind:checked="value.value" v-bind:disabled="!value.editable">
+
+                            <div v-if="checkPropertyType(value, 3)">
+                                <input v-bind:property="property" type="checkbox" v-bind:checked="value.bool" v-bind:disabled="!value.editable">
+                                <input class="edit" v-bind:property="property" type="button" value="Edit Code" v-on:click="onEditCode($event, value.value, value)" v-bind:disabled="!value.editable || !value.bool">
+                            </div>
+
+                            <input v-bind:property="property" v-if="checkPropertyType(value, 4)" v-bind:value="value.value.join('/')" v-bind:disabled="!value.editable" v-bind:placeholder="property">
+
+                            <input v-bind:property="property" v-if="checkPropertyType(value, 5)" v-bind:value="value.value" v-bind:disabled="!value.editable" v-bind:placeholder="property">
+                            
+                            <select v-bind:property="property" v-if="checkPropertyType(value, 6)" v-bind:disabled="!value.editable">
+                                <option v-for="op in value.popup" v-bind:selected="value.value == op">{{ op }}</option>
+                            </select>
+
+                            <div v-if="checkPropertyType(value, 7)">
+                                <input v-bind:property="property" v-bind:arg="0" type="number" v-bind:value="value.min" v-bind:disabled="!value.editable" placeholder="Minimum Limit">
+                                <input v-bind:property="property" v-bind:arg="1" type="number" v-bind:value="value.max" v-bind:disabled="!value.editable" placeholder="Maximum Limit">
+                            </div>
+
+                            <div v-if="checkPropertyType(value, 8)">
+                                <input v-bind:property="property" v-bind:arg="0" type="number" v-bind:value="value.min" v-bind:disabled="!value.editable" placeholder="Minimum Limit">
+                                <input v-bind:property="property" v-bind:arg="1" type="number" v-bind:value="value.max" v-bind:disabled="!value.editable" placeholder="Maximum Limit">
+                            </div>
+
+                            <div v-if="checkPropertyType(value, 9)">
+                                <input v-bind:property="property" v-bind:arg="0" v-bind:value="value.min" v-bind:disabled="!value.editable" placeholder="Minimum Value">
+                                <input v-bind:property="property" v-bind:arg="1" v-bind:value="value.max" v-bind:disabled="!value.editable" placeholder="Maximum Value">
+                            </div>
+
+                            <div class="droppable" v-if="checkPropertyType(value, 10)" ondragover="onControlDragOver(event)" ondragleave="onControlDragLeave(event)" v-on:drop="onDrop($event, value)">
+                                <div class="included-control" v-for="(control, i) in value.value">
+                                    <div>{{ control.properties["Control Name"].value }}</div>
+                                    <img v-bind:src="control.img">
+                                </div>
+                            </div>
+
+                            <input class="edit" v-bind:property="property" type="button" value="Edit Code" v-if="checkPropertyType(value, 11)" v-on:click="onEditCode($event, value.value, value)" v-bind:disabled="!value.editable">
+                        </td>
+                    </tr>
+                </table>
+                <table id="delete" v-if="selectedItem">
+                    <tr>
+                        <td colspan="2" v-on:click="onDelete($event)">Delete</td>
+                    </tr>
+                </table>
+                <table id="help" v-else>
+                    <tr>
+                        <td colspan="2">Click one item to show its property.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="control">
+            <div class="title">
+                <h2>Control</h2>
+                <div class="toolbar" v-on:change="onChangeTool($event)">
+                    <input id="tool-control" type="radio" name="toolbar" value=0 checked>
+                    <label for="tool-control">Control</label>
+                    <input id="tool-layout" type="radio" name="toolbar" value=1>
+                    <label for="tool-layout">Layout</label>
+                </div>
+            </div>
+            <div class="content">
+                <div v-if="tool == 0" class="control" draggable="true" v-on:drag="onDrag($event, i, control)"  v-for="(control, i) in controls">
+                    <img draggable="false" v-bind:src="control.preview">
+                    <span draggable="false">
+                        {{ control.name }}
+                        <strong class="intro">{{ control.intro }}</strong>
+                    </span>
+                </div>
+                <div v-if="tool == 1" class="layout" draggable="true" v-on:drag="onDrag($event, i, layout)"  v-for="(layout, i) in layouts">
+                    <img draggable="false" v-bind:src="layout.preview">
+                    <span draggable="false">
+                        {{ layout.name }}
+                        <strong class="intro">{{ layout.intro }}</strong>
+                    </span>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </section>
+
+    <section id="preview">
+        <div class="title">
+            <h2>Preview</h2>
+        </div>
+        <div class="content">
+            <div class="preview">
+                <h3>Menu Bar</h3>
+                <div id="add-item" class="operation" v-on:click="addItem()">Add Item</div>
+                <div id="menu-bar">
+                    <img src="images/MenuBarTemplate.png">
+                    <div id="item-container">
+                        <div class="menu-item">
+                            <div v-bind:id="'menu-item-' + i" class="menu-item-parent" v-for="(item, i) in roots" v-on:click="selectItem($event)" v-bind:onload="onLoad(i)">{{ item }}</div>
+
+                            <table id="menu-item-child" v-if="menuTable.length">
+                                <tr v-for="(i, indexI) in menuTable.length" v-on:click="selectItem($event)">
+                                    <td v-bind:id="'child-' + indexI + '-' + indexJ"  v-for="(j, indexJ) in menuTable[i-1]" v-bind:class="{ first: indexJ == emptyFlags[indexI], last: indexJ == menuTable[i-1].length - 1, empty: j == 'EMPTY' }" v-bind:onload="onLoadChild(indexI, indexJ, j)">{{ j }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview">
+                <h3>Inspector</h3>
+                <div id="add-component" class="operation" v-on:click="addComponent($event)">Add Component</div>
+                <div id="inspector">
+                    <div>
+                        <img src="images/InspectorTemplate.png">
+                    </div>
+                    <div v-bind:id="'component-container-' + i" v-for="(component, i) in components" class="component-container" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" v-on:drop="onDrop($event)" v-bind:onload="onLoadParent(i)">
+                        <div class="component-title" v-on:click="selectItem($event)">
+                            <img src="images/ComponentTemplate.png">
+                            <div>{{ component.properties["Component Name"].value }}</div>
+                        </div>
+                        <div draggable="true" v-bind:id="'control-' + i + '-' + j" class="component-control" v-bind:class="{ 'layout-control' : isLayout(control) }" v-for="(control, j) in component.controls" v-if="!control.folder" v-bind:onload="onLoad(i, j)" v-on:drag="onDrag($event)" v-on:click="selectItem($event)">
+                            <div draggable="false">{{ control.properties["Control Name"].value }}</div>
+                            <img v-if="!isLayout(control)" draggable="false" v-bind:src="control.img">
+
+                            <div v-bind:id="'control-child-' + j + '-' + k" class="component-control-child" v-for="(child, k) in control.properties['Included Controls'].value" v-bind:onload="onLoadChild(i, j, k)" ondragover="onDragOverStop()" v-on:click="selectItem($event)">
+                                <div>{{ child.properties["Control Name"].value }}</div>
+                                <img v-if="!isLayout(child)" v-bind:src="child.img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview">
+                <h3>Editor Window</h3>
+                <div id="add-window" class="operation" v-on:click="addWindow($event)">Add Window</div>
+                <div id="editor-window">
+                    <div v-bind:id="'editor-window-container-'+ i" class="editor-window-container" v-for="(ewindow, i) in ewindows" v-bind:onload="onLoadParent(i)">
+                        <div class="editor-window-template">
+                            <img src="images/EditorWindowTemplate.png">
+                            <img src="images/EditorWindowControlTemplate.png">
+                        </div>
+
+                        <div class="editor-window-content" ondragover="onWindowDragOver(event)" ondragleave="onWindowDragLeave(event)" v-on:drop="onDrop($event)">
+                            <div class="editor-window-title" v-on:click="selectItem($event)">{{ ewindow.properties["Window Title"].value }}</div>
+                            <div v-bind:id="'editor-window-control-' + i + '-' + j" class="editor-window-control" v-bind:class="{ 'layout-control' : isLayout(control) }" v-if="!control.folder" v-for="(control, j) in ewindow.controls" v-on:click="selectItem($event)" v-bind:onload="onLoad(i, j)" draggable="true" v-on:drag="onDrag($event)">
+                                <div draggable="false" >{{ control.properties["Control Name"].value }}</div>
+                                <img v-if="!isLayout(control)" draggable="false" v-bind:src="control.img">
+
+                                <div v-bind:id="'editor-window-control-child-' + j + '-' + k" class="editor-window-control-child" v-for="(child, k) in control.properties['Included Controls'].value" v-bind:onload="onLoadChild(i, j, k)" ondragover="onDragOverStop()" v-on:click="selectItem($event)">
+                                    <div>{{ child.properties["Control Name"].value }}</div>
+                                    <img v-if="!isLayout(child)" v-bind:src="child.img">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="code" class="hidden">
+        <div class="mask">
+            <div id="code-submit" class="title">
+                <h2>Code Editor</h2>
+                <div id="confirm" class="operation" v-on:click="confirm()">Confirm</div>
+                <div id="discard" class="operation red" v-on:click="discard()">Discard</div>
+            </div>
+            <div id="code-editor" class="content"></div>
+        </div>
+    </section>
+
+    <section id="export-all" class="hidden">
+        <div class="mask">
+            <div class="title">
+                <h2>Export</h2>
+                <div id="close" class="operation red" v-on:click="discard()">Cancel</div>
+            </div>
+            <div class="content">
+                <p>Click to select or deselect the extensions that you want to export.</p>
+                <div class="checkbox">
+                    <input id="export-menu-bar" type="checkbox" v-bind:checked="ifExportMenuBar" v-on:change="onChange($event, 0)">
+                    <label for="export-menu-bar">Menu Bar</label>
+                </div>
+
+                <div class="checkbox">
+                    <input id="export-inspector" type="checkbox" v-bind:checked="ifExportInspector" v-on:change="onChange($event, 1)">
+                    <label for="export-inspector">Inspector</label>
+                </div>
+                
+                <div class="checkbox">
+                    <input id="export-editor-window" type="checkbox" v-bind:checked="ifExportEditorWindow" v-on:change="onChange($event, 2)">
+                    <label for="export-editor-window">Editor Window</label>
+                </div>
+            </div>
+
+            <div class="operation-holder">
+                <div id="confirm" class="operation grey" v-on:click="exportJSON()">Export as JSON</div>
+                <div id="discard" class="operation" v-on:click="exportCSharp()">Export as C# Script</div>
+            </div>
+        </div>
+    </section>
+    </main>
+</body>
+
+<!-- Sidebar Vue Objects -->
+<script src="js/vue/property.js"></script>
+<script src="js/vue/control.js"></script>
+
+<script src="js/vue/code-editor.js"></script>
+<script src="js/vue/export-all.js"></script>
+
+<!-- Preview Vue Objects -->
+<script src="js/vue/preview-menu.js"></script>
+<script src="js/vue/preview-inspector.js"></script>
+<script src="js/vue/preview-editor-window.js"></script>
+
+<!-- Top Menubar Vue Objects -->
+<script src="js/vue/command.js"></script>
+
+</html>
